@@ -5,11 +5,11 @@
     <h1 class="text-3xl font-bold text-red-600 mb-6">🗑️ Trash</h1>
 
     @if(session('success'))
-        <div class="text-green-600 mb-4">{{ session('success') }}</div>
+    <div class="text-green-600 mb-4">{{ session('success') }}</div>
     @endif
 
     @if(session('info'))
-        <div class="text-blue-600 mb-4">{{ session('info') }}</div>
+    <div class="text-blue-600 mb-4">{{ session('info') }}</div>
     @endif
 
     <!-- Active Collections Section -->
@@ -23,17 +23,17 @@
         </thead>
         <tbody>
             @foreach($collections as $collection)
-                @if(!in_array($collection->id, $trashedIds))
-                    <tr>
-                        <td class="border px-4 py-2">{{ $collection->name }}</td>
-                        <td class="border px-4 py-2">
-                            <form action="{{ route('trash.move', $collection->id) }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="text-red-600 hover:underline">Move to Trash</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endif
+            @if(!in_array($collection->id, $trashedIds))
+            <tr>
+                <td class="border px-4 py-2">{{ $collection->name }}</td>
+                <td class="border px-4 py-2">
+                    <form action="{{ route('trash.move', $collection->id) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="text-red-600 hover:underline">Move to Trash</button>
+                    </form>
+                </td>
+            </tr>
+            @endif
             @endforeach
         </tbody>
     </table>
@@ -49,15 +49,20 @@
         </thead>
         <tbody>
             @foreach($trashedCollections as $trashed)
-                <tr>
-                    <td class="border px-4 py-2">{{ $trashed->collection_name }}</td>
-                    <td class="border px-4 py-2">
-                        <form action="{{ route('trash.restore', $trashed->collection_id) }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="text-green-600 hover:underline">Restore</button>
-                        </form>
-                    </td>
-                </tr>
+            <tr>
+                <td class="border px-4 py-2">{{ $trashed->collection_name }}</td>
+                <td class="border px-4 py-2">
+                    <form action="{{ route('trash.restore', $trashed->collection_id) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="text-green-600 hover:underline">Restore</button>
+                    </form>
+                    <form action="{{ route('trash.delete', $trashed->collection_id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure? This cannot be undone.');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-red-600 hover:underline ml-4">Delete Permanently</button>
+                    </form>
+                </td>
+            </tr>
             @endforeach
         </tbody>
     </table>

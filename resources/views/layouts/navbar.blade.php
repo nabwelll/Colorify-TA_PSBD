@@ -18,9 +18,9 @@
                  x-transition:leave-end="transform opacity-0 scale-95"
                  class="absolute right-0 mt-2 bg-white rounded-xl shadow-lg z-50 overflow-hidden border border-gray-100 p-5 text-left"
                  style="display: none; width: 320px; white-space: normal; word-wrap: break-word;">
-                <h3 class="font-bold text-gray-900 text-lg mb-2">Tentang Colorify</h3>
+                <h3 class="font-bold text-gray-900 text-lg mb-2">Tentang Wernoin</h3>
                 <p class="text-sm text-gray-600 mb-4 leading-relaxed">
-                    Colorify adalah sebuah aplikasi generator dan pengelola palet warna. Dirancang untuk membantu desainer, developer, dan kreator mencari, menyimpan, serta mengelola inspirasi kombinasi warna dengan mudah.
+                    Wernoin adalah sebuah aplikasi generator dan pengelola palet warna. Dirancang untuk membantu desainer, developer, dan kreator mencari, menyimpan, serta mengelola inspirasi kombinasi warna dengan mudah.
                 </p>
                 <div class="border-t border-gray-100 pt-3">
                     <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">Tugas Akhir PSBD</p>

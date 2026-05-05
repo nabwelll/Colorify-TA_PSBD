@@ -7,14 +7,18 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'App\\Http\\Controllers\\CollectionController' => $baseDir . '/app/Http/Controllers/CollectionController.php',
+    'App\\Http\\Controllers\\CollectionPaletteController' => $baseDir . '/app/Http/Controllers/CollectionPaletteController.php',
     'App\\Http\\Controllers\\ColorGeneratorController' => $baseDir . '/app/Http/Controllers/ColorGeneratorController.php',
     'App\\Http\\Controllers\\ColorPaletteController' => $baseDir . '/app/Http/Controllers/ColorPaletteController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\PresetController' => $baseDir . '/app/Http/Controllers/PresetController.php',
+    'App\\Http\\Controllers\\SettingsController' => $baseDir . '/app/Http/Controllers/SettingsController.php',
     'App\\Http\\Controllers\\TemplateController' => $baseDir . '/app/Http/Controllers/TemplateController.php',
+    'App\\Http\\Controllers\\TrashController' => $baseDir . '/app/Http/Controllers/TrashController.php',
     'App\\Http\\Requests\\Auth\\LoginRequest' => $baseDir . '/app/Http/Requests/Auth/LoginRequest.php',
     'App\\Models\\Collection' => $baseDir . '/app/Models/Collection.php',
     'App\\Models\\ColorPalette' => $baseDir . '/app/Models/ColorPalette.php',
+    'App\\Models\\Trash' => $baseDir . '/app/Models/Trash.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Observers\\ColorPaletteObserver' => $baseDir . '/app/Observers/ColorPaletteObserver.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',

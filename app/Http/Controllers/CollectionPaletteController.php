@@ -10,6 +10,7 @@ class CollectionPaletteController extends Controller
     {
         $data = DB::table('collections')
             ->join('color_palettes', 'collections.id', '=', 'color_palettes.collection_id')
+            ->where('collections.user_id', auth()->id())
             ->select('collections.name as collection_name', 'color_palettes.name as palette_name', 'color_palettes.colors')
             ->get();
 

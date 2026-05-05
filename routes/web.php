@@ -29,7 +29,8 @@ Route::middleware(['auth'])->group(function () {
    Route::get('/trash', [TrashController::class, 'index'])->name('trash.index');
    Route::post('/trash/move/{id}', [TrashController::class, 'move'])->name('trash.move');
    Route::post('/trash/restore/{id}', [TrashController::class, 'restore'])->name('trash.restore');
-   Route::get('/collections-palettes', [CollectionPaletteController::class, 'index'])->name( 'palette.index');
+   Route::delete('/trash/delete/{id}', [TrashController::class, 'delete'])->name('trash.delete');
+   Route::get('/collections-palettes', [CollectionPaletteController::class, 'index'])->name('palette.index');
 
    Route::post('/collections/{collection}/palettes', [ColorPaletteController::class, 'store'])->name('collections.palettes.store');
    Route::put('/collections/{collection}/palettes/{palette}', [ColorPaletteController::class, 'update'])->name('collections.palettes.update');

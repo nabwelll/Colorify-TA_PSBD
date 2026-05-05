@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('collection_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->json('colors');
-            $table->timestamp('saved_on');
+            $table->timestamp('saved_on')->useCurrent();
             $table->timestamps();
         });
     }

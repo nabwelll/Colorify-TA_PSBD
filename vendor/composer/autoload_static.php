@@ -510,14 +510,18 @@ class ComposerStaticInit54930214181cc1136e9faf3dd7a75357
 
     public static $classMap = array (
         'App\\Http\\Controllers\\CollectionController' => __DIR__ . '/../..' . '/app/Http/Controllers/CollectionController.php',
+        'App\\Http\\Controllers\\CollectionPaletteController' => __DIR__ . '/../..' . '/app/Http/Controllers/CollectionPaletteController.php',
         'App\\Http\\Controllers\\ColorGeneratorController' => __DIR__ . '/../..' . '/app/Http/Controllers/ColorGeneratorController.php',
         'App\\Http\\Controllers\\ColorPaletteController' => __DIR__ . '/../..' . '/app/Http/Controllers/ColorPaletteController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\PresetController' => __DIR__ . '/../..' . '/app/Http/Controllers/PresetController.php',
+        'App\\Http\\Controllers\\SettingsController' => __DIR__ . '/../..' . '/app/Http/Controllers/SettingsController.php',
         'App\\Http\\Controllers\\TemplateController' => __DIR__ . '/../..' . '/app/Http/Controllers/TemplateController.php',
+        'App\\Http\\Controllers\\TrashController' => __DIR__ . '/../..' . '/app/Http/Controllers/TrashController.php',
         'App\\Http\\Requests\\Auth\\LoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Auth/LoginRequest.php',
         'App\\Models\\Collection' => __DIR__ . '/../..' . '/app/Models/Collection.php',
         'App\\Models\\ColorPalette' => __DIR__ . '/../..' . '/app/Models/ColorPalette.php',
+        'App\\Models\\Trash' => __DIR__ . '/../..' . '/app/Models/Trash.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Observers\\ColorPaletteObserver' => __DIR__ . '/../..' . '/app/Observers/ColorPaletteObserver.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
