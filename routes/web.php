@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\TrashController;
 use App\Http\Controllers\CollectionPaletteController;
+use App\Http\Controllers\SettingsController;
 
 Route::get('/', [ColorGeneratorController::class, 'index']);
 Route::post('/generate-palette', [ColorGeneratorController::class, 'generatePalette']);
@@ -45,5 +46,8 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+   Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+   Route::patch('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile.update');
+   Route::patch('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.password.update');
    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
