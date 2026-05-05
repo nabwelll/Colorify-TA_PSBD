@@ -3,7 +3,6 @@
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ColorPaletteController;
 use App\Http\Controllers\PresetController;
-use App\Http\Controllers\TemplateController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ColorGeneratorController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -15,8 +14,6 @@ use App\Http\Controllers\SettingsController;
 Route::get('/', [ColorGeneratorController::class, 'index']);
 Route::post('/generate-palette', [ColorGeneratorController::class, 'generatePalette']);
 Route::get('/presets', [PresetController::class, 'index'])->name('presets');
-Route::get('/templates', [TemplateController::class, 'index'])->name('templates');
-Route::get('/templates/{theme}', [TemplateController::class, 'getThemeTemplates']);
 
 
 

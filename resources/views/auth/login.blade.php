@@ -31,7 +31,7 @@
             <!-- Login Form End -->
 
             <p class="text-gray-500 text-sm text-center mt-8">
-                Wernoin adalah platform inovatif untuk eksplorasi, pengelolaan, dan pembuatan palet warna yang mempermudah desain visual.
+                Colorify adalah platform inovatif untuk eksplorasi, pengelolaan, dan pembuatan palet warna yang mempermudah desain visual.
             </p>
         </div>
     </div>

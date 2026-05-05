@@ -8,7 +8,7 @@
 
         {{-- Header --}}
         <div class="text-center mb-8">
-            <h1 class="text-6xl font-bold text-gray-900 mb-1" style="font-family:'Poppins',sans-serif">Wernoin Color</h1>
+            <h1 class="text-6xl font-bold text-gray-900 mb-1" style="font-family:'Poppins',sans-serif">Colorify Color</h1>
             <h1 class="text-6xl font-bold text-gray-900 mb-4" style="font-family:'Poppins',sans-serif">Generator</h1>
             <p class="text-gray-600">Enter up to 3 colors — they'll be blended into one smooth 11-swatch palette</p>
         </div>
@@ -386,7 +386,7 @@
             const prefix = ready.length === 1 ?
                 (ready[0].name || 'color').toLowerCase().replace(/\s+/g, '-') :
                 'blend';
-            const lines = [`/* Wernoin — ${paletteName.textContent} */`];
+            const lines = [`/* Colorify — ${paletteName.textContent} */`];
             swatches.forEach((hex, i) => lines.push(`--color-${prefix}-${(i + 1) * 100}: ${hex};`));
             navigator.clipboard.writeText(lines.join('\n'))
                 .then(() => showNotification('CSS variables copied!'));
