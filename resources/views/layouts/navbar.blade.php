@@ -20,6 +20,7 @@
                     <p class="text-sm text-gray-800 font-bold">Raihan Sahaja (21120123130093)</p>
                     <p class="text-sm text-gray-800 font-bold">Yasmin Haniyya (21120124120010)</p>
                     <p class="text-sm text-gray-800 font-bold">Shofwan Thufail Akhmad (21120124130066)</p>
+                    <p class="text-sm text-gray-800 font-bold">Nabil Bintang Ardiansyah Purwanto (21120123140121)</p>
 
                 </div>
             </div>
