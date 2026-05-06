@@ -18,7 +18,7 @@
                     <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">Tugas Akhir PSBD</p>
                     <p class="text-sm text-gray-800 font-bold">Kelompok 04 (09 & 56)</p>
                     <p class="text-sm text-gray-800 font-bold">Raihan Sahaja (21120123130093)</p>
-                    <p class="text-sm text-gray-800 font-bold">Yasmin Haniyya (2112012412010)</p>
+                    <p class="text-sm text-gray-800 font-bold">Yasmin Haniyya (21120124120010)</p>
 
                 </div>
             </div>
