@@ -33,7 +33,7 @@
                 </div>
                 <div class="flex gap-3">
                     <button onclick="exportPalette()" class="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors">Export CSS</button>
-                    <button class="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors">Save</button>
+                    <button onclick="openSavePaletteModal()" class="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors">Save</button>
                 </div>
             </div>
 
@@ -75,9 +75,23 @@
     </div>
 </div>
 
+@include('components.save-palette-modal')
+
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
+        // Get base URL from current location - extract the base path from current URL
+        const currentUrl = window.location.href;
+        const publicIndex = currentUrl.indexOf('/public/');
+        let baseUrl = '';
+        if (publicIndex !== -1) {
+            baseUrl = currentUrl.substring(0, publicIndex + 7); // +7 for length of '/public'
+        } else {
+            baseUrl = window.location.origin;
+        }
+        // Remove trailing slash if present
+        baseUrl = baseUrl.replace(/\/$/, '');
 
         const MAX_COLORS = 3;
         const TOTAL_SWATCHES = 11;
@@ -451,23 +465,49 @@
                 block.className = 'aspect-square relative group cursor-pointer transition-all duration-300 rounded-xl hover:shadow-lg hover:scale-105 hover:z-10';
                 block.innerHTML = `
                 <div class="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-b from-transparent to-black/30"></div>
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <button class="copy-color-btn bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors" title="Copy hex code">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
                 <div class="absolute bottom-2 left-0 right-0 text-center font-medium text-white opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0" style="font-size:9px">${hex.toUpperCase()}</div>
             `;
-                block.addEventListener('click', e => {
+                const copyBtn = block.querySelector('.copy-color-btn');
+                copyBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     navigator.clipboard.writeText(hex).then(() => showNotification('Copied ' + hex));
                     const ripple = document.createElement('div');
                     ripple.className = 'absolute bg-white rounded-full opacity-30 pointer-events-none';
                     ripple.style.animation = 'ripple 1s linear';
-                    const rect = block.getBoundingClientRect();
-                    const size = Math.max(rect.width, rect.height) * 2;
-                    Object.assign(ripple.style, {
-                        width: size + 'px'
-                        , height: size + 'px'
-                        , left: (e.clientX - rect.left - size / 2) + 'px'
-                        , top: (e.clientY - rect.top - size / 2) + 'px'
-                    , });
-                    block.appendChild(ripple);
+                    ripple.style.top = '50%';
+                    ripple.style.left = '50%';
+                    ripple.style.transform = 'translate(-50%, -50%)';
+                    const size = 40;
+                    ripple.style.width = size + 'px';
+                    ripple.style.height = size + 'px';
+                    copyBtn.appendChild(ripple);
                     setTimeout(() => ripple.remove(), 1000);
+                });
+                block.addEventListener('click', e => {
+                    if (!e.target.closest('.copy-color-btn')) {
+                        navigator.clipboard.writeText(hex).then(() => showNotification('Copied ' + hex));
+                        const ripple = document.createElement('div');
+                        ripple.className = 'absolute bg-white rounded-full opacity-30 pointer-events-none';
+                        ripple.style.animation = 'ripple 1s linear';
+                        const rect = block.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height) * 2;
+                        Object.assign(ripple.style, {
+                            width: size + 'px'
+                            , height: size + 'px'
+                            , left: (e.clientX - rect.left - size / 2) + 'px'
+                            , top: (e.clientY - rect.top - size / 2) + 'px'
+                        , });
+                        block.appendChild(ripple);
+                        setTimeout(() => ripple.remove(), 1000);
+                    }
                 });
                 paletteGrid.appendChild(block);
             });
@@ -494,7 +534,7 @@
             const myId = ++entry.fetchId;
             updateLoading();
 
-            fetch('/generate-palette', {
+            fetch(baseUrl + '/generate-palette', {
                     method: 'POST'
                     , headers: {
                         'Content-Type': 'application/json'
@@ -629,6 +669,210 @@
             swatches.forEach((hex, i) => lines.push(`--color-${prefix}-${(i + 1) * 100}: ${hex};`));
             navigator.clipboard.writeText(lines.join('\n')).then(() => showNotification('CSS variables copied!'));
         };
+
+        // ── Save Palette Modal ──────────────────────────────
+        let selectedCollection = null;
+        let isCreatingNewCollection = false;
+
+        window.openSavePaletteModal = function() {
+            // Check if user is authenticated
+            const userIdMeta = document.querySelector('meta[name="user-id"]');
+            if (!userIdMeta) {
+                showNotification('Please log in to save palettes');
+                window.location.href = '/login';
+                return;
+            }
+
+            const modal = document.getElementById('savePaletteModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            // Load existing collections
+            loadCollections();
+
+            // Update palette preview
+            const swatches = buildBlendedPalette();
+            const previewColors = document.getElementById('previewColors');
+            previewColors.innerHTML = swatches.map(hex =>
+                `<div style="background-color: ${hex}; flex: 1;"></div>`
+            ).join('');
+
+            // Reset form
+            document.getElementById('paletteNameInput').value = '';
+            selectedCollection = null;
+            isCreatingNewCollection = false;
+            document.getElementById('newCollectionDiv').classList.add('hidden');
+        };
+
+        window.closeSavePaletteModal = function() {
+            const modal = document.getElementById('savePaletteModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        function loadCollections() {
+            const collectionOptions = document.getElementById('collectionOptions');
+            collectionOptions.innerHTML = '';
+
+            fetch(baseUrl + '/collections', {
+                    headers: {
+                        'Accept': 'application/json'
+                        , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+                .then(res => res.json())
+                .then(collections => {
+                    // Add "Create new collection" option
+                    const newCollDiv = document.createElement('label');
+                    newCollDiv.className = 'collection-option';
+                    newCollDiv.innerHTML = `
+                    <input type="radio" name="collection" value="new" onchange="onCollectionChange('new')">
+                    <span class="text-sm font-medium text-gray-900">+ Create New Collection</span>
+                `;
+                    collectionOptions.appendChild(newCollDiv);
+
+                    // Add existing collections
+                    if (collections.length > 0) {
+                        const divider = document.createElement('div');
+                        divider.className = 'my-2 border-t border-gray-200';
+                        collectionOptions.appendChild(divider);
+
+                        collections.forEach(collection => {
+                            const label = document.createElement('label');
+                            label.className = 'collection-option';
+                            label.innerHTML = `
+                            <input type="radio" name="collection" value="${collection.id}" onchange="onCollectionChange(${collection.id})">
+                            <span class="text-sm font-medium text-gray-900">${collection.name}</span>
+                        `;
+                            collectionOptions.appendChild(label);
+                        });
+                    } else {
+                        const p = document.createElement('p');
+                        p.className = 'text-sm text-gray-500 py-2';
+                        p.textContent = 'No collections yet. Create a new one to get started.';
+                        collectionOptions.appendChild(p);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading collections:', err);
+                    showNotification('Error loading collections');
+                });
+        }
+
+        window.onCollectionChange = function(value) {
+            if (value === 'new') {
+                isCreatingNewCollection = true;
+                selectedCollection = null;
+                document.getElementById('newCollectionDiv').classList.remove('hidden');
+            } else {
+                isCreatingNewCollection = false;
+                selectedCollection = value;
+                document.getElementById('newCollectionDiv').classList.add('hidden');
+            }
+        };
+
+        // Handle form submission
+        document.getElementById('savePaletteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const paletteNameInput = document.getElementById('paletteNameInput').value.trim();
+            if (!paletteNameInput) {
+                showNotification('Please enter a palette name');
+                return;
+            }
+
+            const swatches = buildBlendedPalette();
+            if (!swatches.length) {
+                showNotification('No palette to save');
+                return;
+            }
+
+            let collectionId = selectedCollection;
+
+            // Create new collection if needed
+            if (isCreatingNewCollection) {
+                const newCollectionName = document.getElementById('newCollectionName').value.trim();
+                if (!newCollectionName) {
+                    showNotification('Please enter a collection name');
+                    return;
+                }
+
+                try {
+                    const createRes = await fetch(baseUrl + '/collections', {
+                        method: 'POST'
+                        , headers: {
+                            'Content-Type': 'application/json'
+                            , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        }
+                        , body: JSON.stringify({
+                            name: newCollectionName
+                        })
+                    });
+
+                    if (!createRes.ok) throw new Error('Failed to create collection');
+                    const newCollection = await createRes.json();
+                    collectionId = newCollection.id;
+                } catch (err) {
+                    console.error('Error creating collection:', err);
+                    showNotification('Failed to create collection');
+                    return;
+                }
+            }
+
+            if (!collectionId) {
+                showNotification('Please select or create a collection');
+                return;
+            }
+
+            // Save palette to collection
+            try {
+                const saveBtn = document.getElementById('savePaletteBtn');
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+
+                const response = await fetch(baseUrl + `/collections/${collectionId}/palettes`, {
+                    method: 'POST'
+                    , headers: {
+                        'Content-Type': 'application/json'
+                        , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                    , body: JSON.stringify({
+                        name: paletteNameInput
+                        , colors: swatches
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to save palette');
+                }
+
+                showNotification('Palette saved successfully!');
+                closeSavePaletteModal();
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Palette';
+
+            } catch (err) {
+                console.error('Error saving palette:', err);
+                showNotification('Error: ' + err.message);
+                document.getElementById('savePaletteBtn').disabled = false;
+                document.getElementById('savePaletteBtn').textContent = 'Save Palette';
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('savePaletteModal').addEventListener('click', (e) => {
+            if (e.target.id === 'savePaletteModal') {
+                closeSavePaletteModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('savePaletteModal').style.display === 'flex') {
+                closeSavePaletteModal();
+            }
+        });
 
         // ── Init ───────────────────────────────────────────────
         rebuildRows();
