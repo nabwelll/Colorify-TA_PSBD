@@ -27,6 +27,7 @@
                             <p><span class="font-semibold">Nabil Bintang Ardiansyah Purwanto</span> <span class="text-gray-500">(21120123140121)</span></p>
                             <p><span class="font-semibold">Dzaki Eka Atmaja</span> <span class="text-gray-500">(21120123130068)</span></p>
                             <p><span class="font-semibold">Razzaq Permana</span> <span class="text-gray-500">(21120123120016)</span></p>
+                            <p><span class="font-semibold">Alfitra Ulinuha Yusuf</span> <span class="text-gray-500">(21120124130087)</span></p>
                         </div>
                     </div>
                 </div>
