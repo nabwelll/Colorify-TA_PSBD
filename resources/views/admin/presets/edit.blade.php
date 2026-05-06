@@ -75,7 +75,7 @@
 <script>
     let templateCount = 0;
     const maxTemplates = 4;
-    const existingTemplates = @json($preset - > templates);
+    const existingTemplates = @json($preset->templates);
 
     function addTemplate(template = null) {
         if (templateCount >= maxTemplates) {
@@ -84,8 +84,8 @@
         }
 
         const container = document.getElementById('templatesContainer');
-        const colors = template ? .colors || ['#FF1493', '#8B008B', '#4B0082', '#9400D3', '#483D8B'];
-        const templateName = template ? .name || '';
+        const colors = template?.colors || ['#FF1493', '#8B008B', '#4B0082', '#9400D3', '#483D8B'];
+        const templateName = template?.name || '';
 
         const templateHTML = `
         <div class="template-item bg-gray-50 p-4 rounded mb-4">
@@ -108,16 +108,15 @@
                 <div class="grid grid-cols-5 gap-2">
                     ${Array.from({length: 5}, (_, i) => {
                         const color = colors[i] || '#000000';
-                        return ` <
-            div >
-            <input type="color" name="templates[${templateCount}][colors][${i}]" 
+                        return `<div>
+                            <input type="color" name="templates[${templateCount}][colors][${i}]" 
                                     class="w-full h-12 border rounded cursor-pointer" 
                                     value="${color}"
                                     onchange="updateHexInput(this)"
                                     required>
-                                <input type="text" class="hex-input w-full mt-1 px-2 py-1 border rounded text-sm text-center"
+                            <input type="text" class="hex-input w-full mt-1 px-2 py-1 border rounded text-sm text-center"
                                     placeholder="#000000" value="${color}" readonly>
-                            </div>
+                        </div>`
                         `;
                     }).join('')}
                 </div>

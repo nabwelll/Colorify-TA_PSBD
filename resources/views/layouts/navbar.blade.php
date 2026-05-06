@@ -14,14 +14,20 @@
                 <p class="text-sm text-gray-600 mb-4 leading-relaxed">
                     Wernoin adalah sebuah aplikasi generator dan pengelola palet warna. Dirancang untuk membantu desainer, developer, dan kreator mencari, menyimpan, serta mengelola inspirasi kombinasi warna dengan mudah.
                 </p>
-                <div class="border-t border-gray-100 pt-3">
-                    <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">Tugas Akhir PSBD</p>
-                    <p class="text-sm text-gray-800 font-bold">Kelompok 04 (09 & 56)</p>
-                    <p class="text-sm text-gray-800 font-bold">Raihan Sahaja (21120123130093)</p>
-                    <p class="text-sm text-gray-800 font-bold">Yasmin Haniyya (21120124120010)</p>
-                    <p class="text-sm text-gray-800 font-bold">Shofwan Thufail Akhmad (21120124130066)</p>
-                    <p class="text-sm text-gray-800 font-bold">Nabil Bintang Ardiansyah Purwanto (21120123140121)</p>
-
+                <div class="border-t border-gray-100 pt-4 mt-4">
+                    <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-3">Tugas Akhir PSBD</p>
+                    <div class="space-y-2">
+                        <div class="text-sm">
+                            <p class="text-gray-600 font-medium">Kelompok 04 (09 & 56)</p>
+                        </div>
+                        <div class="space-y-1 text-xs text-gray-700">
+                            <p><span class="font-semibold">Raihan Sahaja</span> <span class="text-gray-500">(21120123130093)</span></p>
+                            <p><span class="font-semibold">Yasmin Haniyya</span> <span class="text-gray-500">(21120124120010)</span></p>
+                            <p><span class="font-semibold">Shofwan Thufail Akhmad</span> <span class="text-gray-500">(21120124130066)</span></p>
+                            <p><span class="font-semibold">Nabil Bintang Ardiansyah Purwanto</span> <span class="text-gray-500">(21120123140121)</span></p>
+                            <p><span class="font-semibold">Dzaki Eka Atmaja</span> <span class="text-gray-500">(21120123130068)</span></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
