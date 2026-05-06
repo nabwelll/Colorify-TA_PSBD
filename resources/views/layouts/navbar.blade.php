@@ -19,7 +19,7 @@
                     <p class="text-sm text-gray-800 font-bold">Kelompok 04 (09 & 56)</p>
                     <p class="text-sm text-gray-800 font-bold">Raihan Sahaja (21120123130093)</p>
                     <p class="text-sm text-gray-800 font-bold">Yasmin Haniyya (21120124120010)</p>
-                    <p class="text-sm text-gray-800 font-bold">Shofwan Thufail Akhmad (21120124130066)</p>
+                    <p class="text-sm text-gray-800 font-bold">Shofwan Thufail Akhmad (2112012413006)</p>
 
                 </div>
             </div>
