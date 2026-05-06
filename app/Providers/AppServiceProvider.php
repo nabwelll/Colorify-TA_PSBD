@@ -2,9 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\ColorPalette;
-use App\Observers\ColorPaletteObserver;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL; // <-- Tambahkan baris ini
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,8 +18,11 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot()
+    public function boot(): void
     {
-        ColorPalette::observe(ColorPaletteObserver::class);
+        // Memaksa Laravel selalu menggunakan HTTPS
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 }
