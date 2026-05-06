@@ -17,6 +17,7 @@
                 <div class="border-t border-gray-100 pt-3">
                     <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">Tugas Akhir PSBD</p>
                     <p class="text-sm text-gray-800 font-bold">Kelompok 04 (09 & 56)</p>
+                    <p class="text-sm text-gray-800 font-bold">Raihan Sahaja (21120123130093)</p>
                 </div>
             </div>
         </div>
