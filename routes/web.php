@@ -3,6 +3,7 @@
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ColorPaletteController;
 use App\Http\Controllers\PresetController;
+use App\Http\Controllers\AdminPresetController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ColorGeneratorController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -10,10 +11,11 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\TrashController;
 use App\Http\Controllers\CollectionPaletteController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\UserManagementController;
 
 Route::get('/', [ColorGeneratorController::class, 'index']);
 Route::post('/generate-palette', [ColorGeneratorController::class, 'generatePalette']);
-Route::get('/presets', [PresetController::class, 'index'])->name('presets');
+Route::get('/presets', [PresetController::class, 'index'])->name('presets.index');
 
 
 
@@ -49,3 +51,16 @@ Route::middleware('auth')->group(function () {
    Route::patch('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.password.update');
    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
+
+// Admin Routes
+Route::middleware(['auth', 'admin'])
+   ->prefix('admin')
+   ->name('admin.')
+   ->group(function () {
+
+      // Users
+      Route::resource('users', UserManagementController::class);
+
+      // Presets
+      Route::resource('presets', AdminPresetController::class);
+   });

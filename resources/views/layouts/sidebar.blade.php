@@ -1,82 +1,68 @@
 <div class="sidebar fixed h-screen w-64 bg-white border-r border-gray-200">
-    <!-- Header/Logo Section -->
+
+    <!-- Header -->
     <div class="h-16 px-4 flex items-center border-b border-gray-200">
         <button class="p-2 hover:bg-gray-100 rounded-lg mr-2">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <x-heroicon-o-bars-3 class="w-6 h-6 text-gray-700" />
         </button>
         <span class="text-xl font-semibold">WERNOIN</span>
     </div>
 
-    <!-- Navigation Section -->
     <div class="p-4">
         <nav class="flex flex-col space-y-3">
-            <!-- Create Section -->
-            <div>
-                <div class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100 cursor-pointer" data-menu="create">
-                    <img src="{{ asset('images/create.png') }}" class="w-8 h-8" alt="Create icon" />
-                    <span class="text-lg text-gray-600 pl-1">Create</span>
-                </div>
-            </div>
 
-            <!-- Collection Section -->
-            <div>
-                @auth
-                <div class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100 cursor-pointer" data-menu="collection" onclick="toggleCollection()">
-                    <img src="{{ asset('images/collection.png') }}" class="w-8 h-8" alt="Collection icon" />
-                    <span class="text-lg text-gray-600 pl-1">Collection</span>
-                </div>
+            @auth
+            @if(auth()->user()->isAdmin())
 
-                <div id="collectionDropdown" class="ml-14 transition-all duration-300 ease-in-out" style="max-height: 0; overflow: hidden;">
-                    <div id="collectionList" class="space-y-2">
-                        <!-- Collections will be loaded here dynamically -->
-                    </div>
-                    <div onclick="showAddCollectionModal()" class="collection-add text-gray-500 hover:text-gray-700 cursor-pointer text-lg mt-2">+ Add more</div>
-                </div>
-                @else
-                <div class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100 cursor-pointer" onclick="window.location.href='{{ route('login') }}'">
-                    <img src="{{ asset('images/collection.png') }}" class="w-8 h-8" alt="Collection icon" />
-                    <span class="text-lg text-gray-600 pl-1">Collection</span>
-                </div>
-                @endauth
-            </div>
-
-            <!-- Presets Section -->
-            <div>
-                <div class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100 cursor-pointer" data-menu="presets">
-                    <img src="{{ asset('images/preset.png') }}" class="w-6 h-6 ml-1" alt="Presets icon" />
-                    <span class="text-lg text-gray-600 pl-2">Presets</span>
-                </div>
-            </div>
-
-            <!--Trash Section-->
-            <a href="{{ route('trash.index') }}" class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100 cursor-pointer">
-                <img src="{{ asset('images/trash.png') }}" class="w-8 h-8" alt="Trash icon" />
-                <span class="text-lg text-gray-600 hover:text-gray-900">Trash</span>
+            <!-- Users -->
+            <a href="{{ route('admin.users.index') }}" class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100">
+                <x-heroicon-o-users class="w-6 h-6 text-gray-600" />
+                <span class="text-lg text-gray-600">Users</span>
             </a>
 
-            <div class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100 cursor-pointer" data-menu="palettes">
-                <img src="{{ asset('images/palette.png') }}" class="w-8 h-8" alt="Palette icon" />
-                <a href="{{ url('/collections-palettes') }}" class="text-lg text-gray-600 hover:text-gray-900">My Palettes</a>
+            <!-- Presets Admin -->
+            <a href="{{ route('admin.presets.index') }}" class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100">
+                <x-heroicon-o-swatch class="w-6 h-6 text-gray-600" />
+                <span class="text-lg text-gray-600">Presets</span>
+            </a>
+
+            @else
+
+            <!-- Create -->
+            <div class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100 cursor-pointer" data-menu="create">
+                <x-heroicon-o-plus class="w-6 h-6 text-gray-600" />
+                <span class="text-lg text-gray-600">Create</span>
             </div>
 
-            <!-- Search Section -->
-            <div class="flex flex-col h-full">
-                <div class="border-t border-gray-200 mt-auto"></div>
-                <div class="mt-auto pt-6">
-                    <div class="relative">
-                        @auth
-                        <div class="absolute inset-y-0 left-3 flex items-center">
-                            <svg class="w-5 h-5 text-gray-500" viewBox="0 0 24 24" fill="none">
-                                <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                        </div>
-                        <input type="text" id="searchInput" placeholder="Search for" class="w-full py-2.5 pl-10 pr-4 bg-gray-100 rounded-lg focus:outline-none text-gray-600 placeholder-gray-500" />
-                        @endauth
+            <!-- Collection -->
+            <div>
+                <div class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100 cursor-pointer" onclick="toggleCollection()">
+                    <x-heroicon-o-folder class="w-6 h-6 text-gray-600" />
+                    <span class="text-lg text-gray-600">Collection</span>
+                </div>
+
+                <div id="collectionDropdown" class="ml-10 transition-all duration-300" style="max-height:0; overflow:hidden;">
+                    <div id="collectionList"></div>
+                    <div onclick="showAddCollectionModal()" class="text-gray-500 cursor-pointer mt-2">
+                        + Add more
                     </div>
                 </div>
             </div>
+
+            <!-- Presets -->
+            <div class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100 cursor-pointer" data-menu="presets">
+                <x-heroicon-o-swatch class="w-6 h-6 text-gray-600" />
+                <span class="text-lg text-gray-600">Presets</span>
+            </div>
+
+            <!-- Trash -->
+            <a href="{{ route('trash.index') }}" class="menu-item flex items-center space-x-3 p-2.5 rounded-lg hover:bg-gray-100">
+                <x-heroicon-o-trash class="w-6 h-6 text-gray-600" />
+                <span class="text-lg text-gray-600">Trash</span>
+            </a>
+            @endif
+            @endauth
+
         </nav>
     </div>
 </div>
@@ -87,9 +73,7 @@
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold">Add New Collection</h2>
             <button onclick="closeAddCollectionModal()" class="text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
+                <x-heroicon-o-plus class="w-6 h-6 text-gray-600" />
             </button>
         </div>
         <form id="collectionForm" onsubmit="handleCollectionSubmit(event)">

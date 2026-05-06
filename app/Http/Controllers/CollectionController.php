@@ -17,7 +17,6 @@ class CollectionController extends Controller
 
             $collection = Collection::create([
                 'name' => $validated['name'],
-                'slug' => Str::slug($validated['name']),
                 'user_id' => auth()->id() ?? 1
             ]);
 

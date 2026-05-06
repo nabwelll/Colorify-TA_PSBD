@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Colorify</title>
+    <title>Wernoin</title>
     @vite('resources/css/app.css')
 </head>
 <body class="bg-gray-50">
@@ -16,7 +16,7 @@
         <div class="flex-1">
             <!-- Navbar -->
             @include('layouts.navbar')
-            
+
             <!-- Content -->
             <main class="ml-64 pt-16">
                 @yield('content')
@@ -24,7 +24,7 @@
         </div>
     </div>
     @else
-        @yield('content')
+    @yield('content')
     @endif
     @stack('scripts')
 </body>

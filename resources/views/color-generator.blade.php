@@ -8,7 +8,7 @@
 
         {{-- Header --}}
         <div class="text-center mb-8">
-            <h1 class="text-6xl font-bold text-gray-900 mb-1" style="font-family:'Poppins',sans-serif">Colorify Color</h1>
+            <h1 class="text-6xl font-bold text-gray-900 mb-1" style="font-family:'Poppins',sans-serif">Wernoin Color</h1>
             <h1 class="text-6xl font-bold text-gray-900 mb-4" style="font-family:'Poppins',sans-serif">Generator</h1>
             <p class="text-gray-600">Enter up to 3 colors — they'll be blended into one smooth 11-swatch palette</p>
         </div>
@@ -37,7 +37,6 @@
                 </div>
             </div>
 
-            {{-- Loading bar --}}
             <div id="loadingBar" class="hidden mb-4">
                 <div class="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
                     <div class="h-1 rounded-full animate-loading-bar"></div>
@@ -45,40 +44,32 @@
                 <p class="text-xs text-gray-400 mt-1 text-center" id="loadingText">Fetching palette…</p>
             </div>
 
-            {{-- Always 11 columns --}}
             <div class="grid gap-2" id="paletteGrid" style="grid-template-columns:repeat(11,1fr)"></div>
             <div id="paletteLegend" class="flex gap-6 mt-4 justify-center text-xs text-gray-500"></div>
         </div>
 
-        {{-- Related Colors --}}
-        <div class="mt-16">
-            <div class="flex justify-between items-center mb-6">
+        {{-- Related Colors — Color Theory --}}
+        <div class="mt-16" id="relatedSection">
+            <div class="flex justify-between items-center mb-2">
                 <div>
-                    <h2 class="text-2xl font-semibold text-gray-900 mb-2">Related colours</h2>
-                    <p class="text-gray-600">A recommended colour that are related to the previous palettes.</p>
+                    <h2 class="text-2xl font-semibold text-gray-900 mb-1">Related colours</h2>
+                    <p class="text-gray-500 text-sm">Colours derived from color theory based on your primary colour.</p>
                 </div>
-                <button class="text-gray-900 font-medium hover:text-gray-700 transition-colors">See More</button>
-            </div>
-            <div class="grid grid-cols-3 gap-6">
-                <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="h-16 rounded-lg mb-4 bg-gradient-to-r from-[#ffcdd2] to-[#f48fb1]"></div>
-                    <p class="text-gray-800 mb-4 font-medium">Ideal for a soft and calming interface.</p>
-                    <div class="text-xs font-medium uppercase tracking-wide text-gray-400 mb-1">Purpose</div>
-                    <div class="text-gray-600">Soft &amp; Calming</div>
-                </div>
-                <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="h-16 rounded-lg mb-4 bg-gradient-to-r from-[#e1bee7] to-[#ce93d8]"></div>
-                    <p class="text-gray-800 mb-4 font-medium">Ideal for a gentle and soothing interface.</p>
-                    <div class="text-xs font-medium uppercase tracking-wide text-gray-400 mb-1">Purpose</div>
-                    <div class="text-gray-600">Gentle</div>
-                </div>
-                <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                    <div class="h-16 rounded-lg mb-4 bg-gradient-to-r from-[#ffcdd2] to-[#90caf9]"></div>
-                    <p class="text-gray-800 mb-4 font-medium">Perfect for a calm and professional interface.</p>
-                    <div class="text-xs font-medium uppercase tracking-wide text-gray-400 mb-1">Purpose</div>
-                    <div class="text-gray-600">Calm &amp; Professional</div>
+                {{-- Tab switcher --}}
+                <div class="flex gap-1 bg-gray-100 rounded-lg p-1 text-sm" id="relatedTabs">
+                    <button data-tab="complementary" class="tab-btn px-3 py-1.5 rounded-md font-medium transition-all text-gray-500 hover:text-gray-800">Complementary</button>
+                    <button data-tab="analogous" class="tab-btn px-3 py-1.5 rounded-md font-medium transition-all text-gray-500 hover:text-gray-800">Analogous</button>
+                    <button data-tab="triadic" class="tab-btn px-3 py-1.5 rounded-md font-medium transition-all text-gray-500 hover:text-gray-800">Triadic</button>
+                    <button data-tab="split" class="tab-btn px-3 py-1.5 rounded-md font-medium transition-all text-gray-500 hover:text-gray-800">Split</button>
+                    <button data-tab="tetradic" class="tab-btn px-3 py-1.5 rounded-md font-medium transition-all text-gray-500 hover:text-gray-800">Tetradic</button>
                 </div>
             </div>
+
+            {{-- Tab description --}}
+            <p class="text-xs text-gray-400 mb-6 text-right" id="tabDescription"></p>
+
+            {{-- Related swatches --}}
+            <div id="relatedGrid" class="grid grid-cols-2 gap-4"></div>
         </div>
 
     </div>
@@ -89,14 +80,14 @@
     document.addEventListener('DOMContentLoaded', function() {
 
         const MAX_COLORS = 3;
-        const TOTAL_SWATCHES = 11; // always fixed
+        const TOTAL_SWATCHES = 11;
         const LABELS = ['Primary', 'Secondary', 'Tertiary'];
 
-        // State: { hex, name, rawPalette: [{hex},...] | null }
         const colors = [{
             hex: '#EB3DAE'
             , name: ''
             , rawPalette: null
+            , fetchId: 0
         }];
 
         const inputsWrap = document.getElementById('colorInputsWrap');
@@ -110,8 +101,13 @@
         const paletteLegend = document.getElementById('paletteLegend');
         const loadingBar = document.getElementById('loadingBar');
         const loadingText = document.getElementById('loadingText');
+        const relatedGrid = document.getElementById('relatedGrid');
+        const relatedTabs = document.getElementById('relatedTabs');
+        const tabDescription = document.getElementById('tabDescription');
 
-        // ── Utilities ───────────────────────────────────────────
+        let activeTab = 'complementary';
+
+        // ── Utilities ──────────────────────────────────────────
         function debounce(fn, ms) {
             let t;
             return (...a) => {
@@ -139,6 +135,256 @@
             return a + (b - a) * t;
         }
 
+        // ── HSL helpers ────────────────────────────────────────
+        function hexToHsl(hex) {
+            let [r, g, b] = hexToRgb(hex).map(v => v / 255);
+            const max = Math.max(r, g, b)
+                , min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r:
+                        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+                        break;
+                    case g:
+                        h = ((b - r) / d + 2) / 6;
+                        break;
+                    case b:
+                        h = ((r - g) / d + 4) / 6;
+                        break;
+                }
+            }
+            return [h * 360, s * 100, l * 100];
+        }
+
+        function hslToHex(h, s, l) {
+            h = ((h % 360) + 360) % 360;
+            s = Math.max(0, Math.min(100, s)) / 100;
+            l = Math.max(0, Math.min(100, l)) / 100;
+            const a = s * Math.min(l, 1 - l);
+            const f = n => {
+                const k = (n + h / 30) % 12;
+                return l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+            };
+            return rgbToHex(Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255));
+        }
+        // Generate a mini shade strip (5 swatches) for a given hue
+        function miniStrip(hex) {
+            const [h, s, l] = hexToHsl(hex);
+            return [
+                hslToHex(h, s, Math.min(l + 30, 95))
+                , hslToHex(h, s, Math.min(l + 15, 85))
+                , hex
+                , hslToHex(h, s, Math.max(l - 15, 15))
+                , hslToHex(h, s, Math.max(l - 30, 5))
+            , ];
+        }
+
+        // ── Color theory generators ────────────────────────────
+        const SCHEMES = {
+            complementary: {
+                label: 'Complementary'
+                , desc: 'Opposite on the color wheel — high contrast, bold pairings.'
+                , generate(hex) {
+                    const [h, s, l] = hexToHsl(hex);
+                    return [{
+                            label: 'Base'
+                            , hex
+                        }
+                        , {
+                            label: 'Complement'
+                            , hex: hslToHex(h + 180, s, l)
+                        }
+                    , ];
+                }
+            }
+            , analogous: {
+                label: 'Analogous'
+                , desc: 'Adjacent on the color wheel — harmonious, natural feel.'
+                , generate(hex) {
+                    const [h, s, l] = hexToHsl(hex);
+                    return [{
+                            label: '-30°'
+                            , hex: hslToHex(h - 30, s, l)
+                        }
+                        , {
+                            label: 'Base'
+                            , hex
+                        }
+                        , {
+                            label: '+30°'
+                            , hex: hslToHex(h + 30, s, l)
+                        }
+                        , {
+                            label: '+60°'
+                            , hex: hslToHex(h + 60, s, l)
+                        }
+                    , ];
+                }
+            }
+            , triadic: {
+                label: 'Triadic'
+                , desc: 'Three equally spaced hues — vibrant yet balanced.'
+                , generate(hex) {
+                    const [h, s, l] = hexToHsl(hex);
+                    return [{
+                            label: 'Base'
+                            , hex
+                        }
+                        , {
+                            label: '+120°'
+                            , hex: hslToHex(h + 120, s, l)
+                        }
+                        , {
+                            label: '+240°'
+                            , hex: hslToHex(h + 240, s, l)
+                        }
+                    , ];
+                }
+            }
+            , split: {
+                label: 'Split-Complementary'
+                , desc: 'Complement split into two — contrast without tension.'
+                , generate(hex) {
+                    const [h, s, l] = hexToHsl(hex);
+                    return [{
+                            label: 'Base'
+                            , hex
+                        }
+                        , {
+                            label: 'Split A'
+                            , hex: hslToHex(h + 150, s, l)
+                        }
+                        , {
+                            label: 'Split B'
+                            , hex: hslToHex(h + 210, s, l)
+                        }
+                    , ];
+                }
+            }
+            , tetradic: {
+                label: 'Tetradic'
+                , desc: 'Four hues forming a rectangle — rich, complex palettes.'
+                , generate(hex) {
+                    const [h, s, l] = hexToHsl(hex);
+                    return [{
+                            label: 'Base'
+                            , hex
+                        }
+                        , {
+                            label: '+90°'
+                            , hex: hslToHex(h + 90, s, l)
+                        }
+                        , {
+                            label: '+180°'
+                            , hex: hslToHex(h + 180, s, l)
+                        }
+                        , {
+                            label: '+270°'
+                            , hex: hslToHex(h + 270, s, l)
+                        }
+                    , ];
+                }
+            }
+        , };
+
+        // ── Render related section ─────────────────────────────
+        function renderRelated() {
+            const primaryHex = colors[0].hex;
+            if (!isValidHex(primaryHex)) return;
+
+            const scheme = SCHEMES[activeTab];
+            tabDescription.textContent = scheme.desc;
+
+            const pairs = scheme.generate(primaryHex);
+
+            relatedGrid.style.gridTemplateColumns = `repeat(${Math.min(pairs.length, 4)}, 1fr)`;
+            relatedGrid.innerHTML = '';
+
+            pairs.forEach(({
+                label
+                , hex
+            }) => {
+                const strip = miniStrip(hex);
+                const [h, s, l] = hexToHsl(hex);
+
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow';
+                card.innerHTML = `
+                <div class="flex gap-1 mb-3 rounded-xl overflow-hidden h-14">
+                    ${strip.map(c => `
+                        <div class="flex-1 cursor-pointer relative group/swatch transition-all duration-200 hover:flex-[1.5]"
+                             style="background:${c}"
+                             data-hex="${c.toUpperCase()}"
+                             title="${c.toUpperCase()}">
+                            <div class="absolute inset-0 flex items-end justify-center pb-1 opacity-0 group-hover/swatch:opacity-100 transition-opacity">
+                                <span class="text-white font-mono" style="font-size:7px;text-shadow:0 1px 2px rgba(0,0,0,.5)">${c.toUpperCase()}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold text-gray-800 text-sm">${label}</p>
+                        <p class="text-xs text-gray-400 font-mono mt-0.5">${hex.toUpperCase()}</p>
+                        <p class="text-xs text-gray-400 mt-0.5">H:${Math.round(h)}° S:${Math.round(s)}% L:${Math.round(l)}%</p>
+                    </div>
+                    <button class="copy-card-btn w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors flex-shrink-0" title="Copy hex" data-hex="${hex}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+
+                // Copy main hex on button click
+                card.querySelector('.copy-card-btn').addEventListener('click', () => {
+                    navigator.clipboard.writeText(hex).then(() => showNotification('Copied ' + hex.toUpperCase()));
+                });
+
+                // Copy swatch hex on swatch click
+                card.querySelectorAll('[data-hex]').forEach(sw => {
+                    sw.addEventListener('click', () => {
+                        const c = sw.dataset.hex;
+                        navigator.clipboard.writeText(c).then(() => showNotification('Copied ' + c));
+                    });
+                });
+
+                // Apply to primary
+                card.addEventListener('dblclick', () => {
+                    colors[0].hex = hex;
+                    rebuildRows();
+                    fetchPalette(0);
+                    showNotification('Applied ' + hex.toUpperCase() + ' as primary');
+                });
+
+                relatedGrid.appendChild(card);
+            });
+        }
+
+        // ── Tab switching ──────────────────────────────────────
+        function setActiveTab(tab) {
+            activeTab = tab;
+            relatedTabs.querySelectorAll('.tab-btn').forEach(btn => {
+                const isActive = btn.dataset.tab === tab;
+                btn.classList.toggle('bg-white', isActive);
+                btn.classList.toggle('shadow-sm', isActive);
+                btn.classList.toggle('text-gray-900', isActive);
+                btn.classList.toggle('text-gray-500', !isActive);
+            });
+            renderRelated();
+        }
+        relatedTabs.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
+        });
+        setActiveTab('complementary');
+
+        // ── Notification ───────────────────────────────────────
         function showNotification(msg) {
             const el = document.createElement('div');
             el.textContent = msg;
@@ -148,71 +394,56 @@
             setTimeout(() => el.remove(), 2000);
         }
 
-        // ── Blend: always produce exactly TOTAL_SWATCHES colors ─
-        // Anchors are the representative hex of each selected color's
-        // raw palette (we use the palette array itself as color stops).
-        // We spread TOTAL_SWATCHES evenly across all anchors.
+        // ── Blend palette ──────────────────────────────────────
         function buildBlendedPalette() {
             const ready = colors.filter(c => c.rawPalette && c.rawPalette.length);
             if (!ready.length) return [];
-
-            // Build a flat list of anchor hex values from all palettes.
-            // Each rawPalette has N swatches; we use them as gradient stops.
-            // Concatenate all into one ordered list, then sample TOTAL_SWATCHES evenly.
             const allStops = ready.flatMap(c => c.rawPalette.map(s => s.hex));
-            // allStops might be e.g. 11, 22, or 33 items — we resample to exactly 11
-
             const result = [];
             for (let i = 0; i < TOTAL_SWATCHES; i++) {
-                const t = i / (TOTAL_SWATCHES - 1); // 0..1
-                const pos = t * (allStops.length - 1); // position in allStops
+                const t = i / (TOTAL_SWATCHES - 1);
+                const pos = t * (allStops.length - 1);
                 const lo = Math.floor(pos);
                 const hi = Math.min(lo + 1, allStops.length - 1);
                 const frac = pos - lo;
-
-                const rgbLo = hexToRgb(allStops[lo]);
-                const rgbHi = hexToRgb(allStops[hi]);
-
-                result.push(rgbToHex(
-                    lerp(rgbLo[0], rgbHi[0], frac)
-                    , lerp(rgbLo[1], rgbHi[1], frac)
-                    , lerp(rgbLo[2], rgbHi[2], frac)
-                , ));
+                const a = hexToRgb(allStops[lo]);
+                const b = hexToRgb(allStops[hi]);
+                result.push(rgbToHex(lerp(a[0], b[0], frac), lerp(a[1], b[1], frac), lerp(a[2], b[2], frac)));
             }
             return result;
         }
 
-        // ── Render palette ──────────────────────────────────────
+        // ── Render main palette ────────────────────────────────
         function renderPalette() {
+            updateLoading();
             const swatches = buildBlendedPalette();
-            if (!swatches.length) {
+            const hasAny = colors.some(c => c.rawPalette && c.rawPalette.length > 0);
+
+            if (!hasAny) {
                 paletteSection.classList.add('hidden');
                 return;
             }
-
             paletteSection.classList.remove('hidden');
 
-            const ready = colors.filter(c => c.rawPalette);
+            const ready = colors.filter(c => c.rawPalette && c.rawPalette.length > 0);
+            const names = ready.map(c => c.name).filter(Boolean);
+            paletteName.textContent = names.length ?
+                names.join(' × ') :
+                (ready.length > 1 ? 'Blended Palette' : 'Color Palette');
 
-            // Title
-            paletteName.textContent = ready.length === 1 ?
-                (ready[0].name || 'Color Palette') :
-                ready.map(c => c.name).filter(Boolean).join(' × ') || 'Blended Palette';
-
-            // Dots
-            colorDots.innerHTML = ready.map(c =>
-                `<div class="w-4 h-4 rounded-full border border-white shadow-sm" style="background:${c.hex}"></div>`
+            colorDots.innerHTML = colors.map(c =>
+                `<div class="w-4 h-4 rounded-full border border-white shadow-sm" style="background:${c.hex};opacity:${c.rawPalette ? 1 : 0.3}"></div>`
             ).join('');
 
-            // Legend
-            paletteLegend.innerHTML = ready.map((c, i) =>
-                `<span class="flex items-center gap-1">
+            paletteLegend.innerHTML = colors.map((c, i) =>
+                `<span class="flex items-center gap-1 ${c.rawPalette ? '' : 'opacity-40'}">
                 <span class="inline-block w-2 h-2 rounded-full" style="background:${c.hex}"></span>
                 ${LABELS[i]}: ${c.hex.toUpperCase()}
+                ${c.rawPalette === null ? '<span class="text-gray-400">(loading…)</span>' : ''}
             </span>`
             ).join('');
 
-            // Swatches — grid always has 11 columns (set in HTML)
+            if (!swatches.length) return;
             paletteGrid.innerHTML = '';
             swatches.forEach(hex => {
                 const block = document.createElement('div');
@@ -240,19 +471,28 @@
                 });
                 paletteGrid.appendChild(block);
             });
+
+            // Re-render related whenever palette updates
+            renderRelated();
         }
 
-        // ── Fetch raw palette for one index ─────────────────────
-        let pendingCount = 0;
+        function updateLoading() {
+            const anyPending = colors.some(c => c.rawPalette === null);
+            loadingBar.classList.toggle('hidden', !anyPending);
+            if (anyPending) {
+                const n = colors.filter(c => c.rawPalette === null).length;
+                loadingText.textContent = `Generating ${n > 1 ? n + ' palettes' : 'palette'}…`;
+            }
+        }
 
+        // ── Fetch ──────────────────────────────────────────────
         function fetchPalette(index) {
             const entry = colors[index];
             if (!isValidHex(entry.hex)) return;
 
             entry.rawPalette = null;
-            pendingCount++;
-            loadingBar.classList.remove('hidden');
-            loadingText.textContent = `Fetching palette…`;
+            const myId = ++entry.fetchId;
+            updateLoading();
 
             fetch('/generate-palette', {
                     method: 'POST'
@@ -269,24 +509,26 @@
                     return res.json();
                 })
                 .then(data => {
+                    if (entry.fetchId !== myId) return;
                     if (data.error) throw new Error(data.error);
+                    const palette = Array.isArray(data.palette) ? data.palette.filter(s => s && s.hex) : [];
+                    if (!palette.length) throw new Error('Empty palette');
                     entry.name = data.colorName || '';
-                    entry.rawPalette = Array.isArray(data.palette) ? data.palette : [];
+                    entry.rawPalette = palette;
                     renderPalette();
                 })
                 .catch(err => {
-                    console.error('Palette error:', err);
-                    showNotification('Failed to fetch palette for ' + entry.hex);
-                })
-                .finally(() => {
-                    pendingCount = Math.max(0, pendingCount - 1);
-                    if (!pendingCount) loadingBar.classList.add('hidden');
+                    if (entry.fetchId !== myId) return;
+                    console.error(err);
+                    entry.rawPalette = [];
+                    showNotification('Could not generate palette for ' + entry.hex);
+                    renderPalette();
                 });
         }
 
-        const debouncedFetch = debounce(fetchPalette, 350);
+        const debouncedFetch = debounce(fetchPalette, 400);
 
-        // ── Input row builder ────────────────────────────────────
+        // ── Input row builder ──────────────────────────────────
         function buildRow(index) {
             const hex = colors[index].hex;
             const row = document.createElement('div');
@@ -294,16 +536,13 @@
             row.innerHTML = `
             <div class="bg-white rounded-full border shadow-sm overflow-hidden flex items-center p-1 mb-3">
                 <div class="w-10 h-10 rounded-full ml-1 relative flex-shrink-0" style="background:${hex}">
-                    <input type="color" value="${hex}"
-                        class="absolute inset-0 opacity-0 cursor-pointer w-full h-full rounded-full">
+                    <input type="color" value="${hex}" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full rounded-full">
                 </div>
-                <input type="text" value="${hex}" placeholder="${hex}"
-                    class="flex-1 px-4 py-2 focus:outline-none text-gray-700 text-sm min-w-0">
+                <input type="text" value="${hex}" placeholder="${hex}" class="flex-1 px-4 py-2 focus:outline-none text-gray-700 text-sm min-w-0">
                 <span class="text-xs font-medium text-gray-400 mr-2 uppercase tracking-wide flex-shrink-0">${LABELS[index]}</span>
-                ${index > 0 ? `<button class="remove-btn text-gray-300 hover:text-red-400 transition-colors mr-2 text-xl leading-none flex-shrink-0" title="Remove">&times;</button>` : ''}
+                ${index > 0 ? `<button class="remove-btn text-gray-300 hover:text-red-400 transition-colors mr-2 text-xl leading-none flex-shrink-0">&times;</button>` : ''}
             </div>
         `;
-
             const preview = row.querySelector('[style]');
             const picker = row.querySelector('input[type=color]');
             const textIn = row.querySelector('input[type=text]');
@@ -314,7 +553,7 @@
             });
             picker.addEventListener('change', e => {
                 colors[index].hex = e.target.value;
-                debouncedFetch(index);
+                fetchPalette(index);
             });
             textIn.addEventListener('input', e => {
                 let v = e.target.value.trim();
@@ -330,17 +569,15 @@
                 }
             });
             textIn.addEventListener('keydown', e => {
-                if (e.key === 'Enter') {
-                    const v = e.target.value.trim();
-                    if (isValidHex(v)) {
-                        colors[index].hex = v;
-                        fetchPalette(index);
-                    } else alert('Please enter a valid hex color (e.g. #FF5733)');
-                }
+                if (e.key !== 'Enter') return;
+                let v = e.target.value.trim();
+                if (v.length === 6 && !v.startsWith('#')) v = '#' + v;
+                if (isValidHex(v)) {
+                    colors[index].hex = v;
+                    fetchPalette(index);
+                } else showNotification('Invalid hex — use format #RRGGBB');
             });
-            if (index > 0) {
-                row.querySelector('.remove-btn').addEventListener('click', () => removeColor(index));
-            }
+            if (index > 0) row.querySelector('.remove-btn').addEventListener('click', () => removeColor(index));
             return row;
         }
 
@@ -359,14 +596,14 @@
             addBtnLabel.textContent = colors.length === 1 ? 'Add secondary color' : 'Add tertiary color';
         }
 
-        // ── Add / Remove ─────────────────────────────────────────
         addBtn.addEventListener('click', () => {
             if (colors.length >= MAX_COLORS) return;
-            const defaults = ['#3D9AEB', '#3DEB8A'];
+            const defaults = ['#EB3D7A', '#3DEBCF'];
             colors.push({
                 hex: defaults[colors.length - 1] || '#888888'
                 , name: ''
                 , rawPalette: null
+                , fetchId: 0
             });
             rebuildRows();
             fetchPalette(colors.length - 1);
@@ -378,21 +615,22 @@
             renderPalette();
         }
 
-        // ── Export CSS ───────────────────────────────────────────
         window.exportPalette = function() {
             const swatches = buildBlendedPalette();
-            if (!swatches.length) return;
-            const ready = colors.filter(c => c.rawPalette);
+            if (!swatches.length) {
+                showNotification('No palette to export yet');
+                return;
+            }
+            const ready = colors.filter(c => c.rawPalette && c.rawPalette.length);
             const prefix = ready.length === 1 ?
                 (ready[0].name || 'color').toLowerCase().replace(/\s+/g, '-') :
                 'blend';
-            const lines = [`/* Colorify — ${paletteName.textContent} */`];
+            const lines = [`/* Wernoin — ${paletteName.textContent} */`];
             swatches.forEach((hex, i) => lines.push(`--color-${prefix}-${(i + 1) * 100}: ${hex};`));
-            navigator.clipboard.writeText(lines.join('\n'))
-                .then(() => showNotification('CSS variables copied!'));
+            navigator.clipboard.writeText(lines.join('\n')).then(() => showNotification('CSS variables copied!'));
         };
 
-        // ── Init ─────────────────────────────────────────────────
+        // ── Init ───────────────────────────────────────────────
         rebuildRows();
         fetchPalette(0);
     });
