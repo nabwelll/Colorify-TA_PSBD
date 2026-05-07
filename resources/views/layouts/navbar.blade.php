@@ -24,6 +24,7 @@
                             <p><span class="font-semibold">Raihan Sahaja</span> <span class="text-gray-500">(21120123130093)</span></p>
                             <p><span class="font-semibold">Yasmin Haniyya</span> <span class="text-gray-500">(21120124120010)</span></p>
                             <p><span class="font-semibold">Shofwan Thufail Akhmad</span> <span class="text-gray-500">(21120124130066)</span></p>
+                            <p><span class="font-semibold">Muhammad Habiburrahman</span> <span class="text-gray-500">(21120124140121)</span></p>
                             <p><span class="font-semibold">Nabil Bintang Ardiansyah Purwanto</span> <span class="text-gray-500">(21120123140121)</span></p>
                             <p><span class="font-semibold">Dzaki Eka Atmaja</span> <span class="text-gray-500">(21120123130068)</span></p>
                             <p><span class="font-semibold">Razzaq Permana</span> <span class="text-gray-500">(21120123120016)</span></p>
