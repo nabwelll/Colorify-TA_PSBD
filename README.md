@@ -1,8 +1,8 @@
-# Colorify - Color Generator & Palette Manager
+# Wernoin - Color Generator & Palette Manager
 
 Tugas Akhir Praktikum Sistem Basis Data oleh Kelompok 4 (Kel09 & Kel56)
 
-Colorify adalah aplikasi web modern untuk membuat, mengelola, dan menyimpan palet warna. Dilengkapi dengan color blending engine yang menghasilkan 11 swatch warna dengan teori warna yang akurat.
+Wernoin adalah aplikasi web modern untuk membuat, mengelola, dan menyimpan palet warna. Dilengkapi dengan color blending engine yang menghasilkan 11 swatch warna dengan teori warna yang akurat.
 
 ## Fitur Utama
 
@@ -40,7 +40,7 @@ Pastikan sistem Anda memiliki:
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/username/Colorify-TA_PSBD.git
+git clone https://github.com/username/Wernoin-TA_PSBD.git
 cd Colorify-TA_PSBD
 ```
 
@@ -67,7 +67,7 @@ cp .env.example .env
 Lalu edit `.env` dan sesuaikan konfigurasi:
 
 ```env
-APP_NAME=Colorify
+APP_NAME=Wernoin
 APP_ENV=local
 APP_DEBUG=true
 APP_URL=http://localhost:8000
@@ -76,7 +76,7 @@ APP_URL=http://localhost:8000
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=colorify
+DB_DATABASE=wernoin
 DB_USERNAME=root
 DB_PASSWORD=
 ```
@@ -145,7 +145,7 @@ Akses aplikasi di: `http://localhost:8000`
 1. Copy project ke folder `C:\laragon\www\`
 2. Buka Laragon
 3. Klik "Start All"
-4. Akses di: `http://colorify-ta_psbd.test`
+4. Akses di: `http://wernoin-ta_psbd.test`
 
 ### Opsi 3: Menggunakan Virtual Host (Nginx/Apache)
 
@@ -156,7 +156,7 @@ Konfigurasi virtual host untuk point ke folder `public/` project.
 ## Struktur Folder
 
 ```
-Colorify-TA_PSBD/
+Wernoin-TA_PSBD/
 ├── app/
 │   ├── Models/              # Database models
 │   ├── Http/
@@ -287,7 +287,7 @@ Jika masih error, cek file di folder `public/build/`.
 ## Environment Variables Penting
 
 ```env
-APP_NAME=Colorify              # Nama aplikasi
+APP_NAME=Wernoin               # Nama aplikasi
 APP_ENV=local                  # Environment (local/production)
 APP_DEBUG=true                 # Debug mode (false di production)
 APP_URL=http://localhost:8000  # URL aplikasi
@@ -295,7 +295,7 @@ APP_URL=http://localhost:8000  # URL aplikasi
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=colorify
+DB_DATABASE=wernoin
 DB_USERNAME=root
 DB_PASSWORD=
 
